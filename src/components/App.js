@@ -14,6 +14,7 @@ function App() {
   // Hago la petición a la API según carga la página.
   useEffect(() => {
     getApi().then((character) => {
+      console.log(character);
       setCharacterData(character);
     });
   }, [character]);
@@ -23,7 +24,7 @@ function App() {
     setSearch(ev.target.value);
   };
 
-  // Render HTML
+  // Renderizado página
   const renderData = character
     .filter((characterData) => {
       if (search !== "") {
@@ -38,6 +39,7 @@ function App() {
       return (
         <li key={index} className="character">
           <article>
+            <img alt="foto del personaje" src={characterData.image} />
             <h2>{characterData.name}</h2>
             <p>{characterData.species}</p>
           </article>
