@@ -1,31 +1,43 @@
 import { useEffect, useState } from "react";
+import { Route, Switch } from "react-router-dom";
 import "../styles/App.scss";
 import getApi from "../services/callsApi";
-// import CardList from "./CardList";
-// import CardDetail from "./CardDetail";
-// import CardItem from "./CardItem";
-// import Filters from "./Filters";
+import CardList from "./CardList";
+import CardDetail from "./CardDetail";
+import Filters from "./Filters";
+import Footer from "./Footer";
+import Header from "./Header";
 
 function App() {
   // Declaro variables de estado
   const [character, setCharacterData] = useState([]);
   const [search, setSearch] = useState("");
+  const [searchByHouse, setSearchByHouse] = useState("Gryffindor");
   // const [data, setData] = useState('');
   // Hago la petición a la API según carga la página.
   useEffect(() => {
     getApi().then((character) => {
-      console.log(character);
       setCharacterData(character);
     });
   }, [character]);
 
-  // Handlers
-  const handleSearch = (ev) => {
-    setSearch(ev.target.value);
+  useEffect(() => {
+    getApi(searchByHouse).then(() => {
+      setSearchByHouse(searchByHouse);
+    });
+  }, [searchByHouse]);
+
+  // Handlers de los inputs
+  const handleInput = (data) => {
+    if (data.key === "name") {
+      setSearch(data.value);
+    } else if (data.key === "house") {
+      setSearchByHouse(data.value);
+    }
   };
 
   // Renderizado página
-  const renderData = character
+  const filterName = character
     .filter((characterData) => {
       if (search !== "") {
         return characterData.name
@@ -39,7 +51,14 @@ function App() {
       return (
         <li key={index} className="character">
           <article>
-            <img alt="foto del personaje" src={characterData.image} />
+            <img
+              alt="foto del personaje"
+              src={
+                characterData.image !== ""
+                  ? characterData.image
+                  : "https://via.placeholder.com/210x295/e8ffe9/666666/?text=HarryPotter"
+              }
+            />
             <h2>{characterData.name}</h2>
             <p>{characterData.species}</p>
           </article>
@@ -47,36 +66,32 @@ function App() {
       );
     });
 
+  const renderCharacterDetail = (props) => {
+    const routeId = props.match.params.characterId;
+    const characterFound = character.find((person) => character.id === routeId);
+    return <CardDetail character={characterFound} />;
+  };
+
   return (
     <>
-      <header>
-        <h1>Harry Potter</h1>
-      </header>
-      <main>
-        <form>
-          <label htmlFor="name">Busca por personaje:</label>
-          <input
-            type="text"
-            id="name"
-            placeholder="Ej.: Harry Potter"
-            value={search}
-            onChange={handleSearch}
-          />
-          <label htmlFor="house">Selecciona la casa:</label>
-          <select name="house">
-            <option value="gryffindor">Gryffindor</option>
-            <option value="slytherin">Slytherin</option>
-            <option value="ravenclaw">Ravenclaw</option>
-            <option value="hufflepuff">Hufflepuff</option>
-          </select>
-        </form>
-        <section>
-          <ul>{renderData}</ul>
-        </section>
-      </main>
-      <footer>
-        <small>&copy; 2022 elvfira </small>
-      </footer>
+      <Header />
+      <Switch>
+        <Route path="/" exact>
+          <div>
+            <Filters
+              character={search}
+              handleInput={handleInput}
+              house={searchByHouse}
+            />
+            <CardList character={filterName} />
+          </div>
+        </Route>
+        <Route path="/person/:personId" render={renderCharacterDetail} />
+      </Switch>
+      <Footer />
+      <section>
+        <ul>{filterName}</ul>
+      </section>
     </>
   );
 }
