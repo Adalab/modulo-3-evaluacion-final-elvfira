@@ -1,24 +1,18 @@
-import CardItem from "./CardItem";
-import Mistake from "./Mistake";
-
-const CardList = (props) => {
-  const charactersElement = props.person.map((person) => {
-    console.log(charactersElement);
+function CardList (props) {
     return (
-      <li className="card" key={person.id}>
-        <CardItem person={person} />
-      </li>
-    );
-  });
+        <>
+        <li key={props.index} className="character">
+          <article>
+            <img alt="foto del personaje" src={props.characterData.image} />
+            <h2>{props.characterData.name}</h2>
+            <p>{props.characterData.species}</p>
+          </article>
+        </li>
+        </>
 
-  if (props.characters.length === 0) {
-    return <Mistake />;
-  } else {
-    return (
-      <section className="sectionCards">
-        <ul className="cards">{charactersElement}</ul>
-      </section>
-    );
-  }
+    )
+   
+
 }
+
 export default CardList;

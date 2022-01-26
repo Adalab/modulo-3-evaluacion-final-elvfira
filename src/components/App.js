@@ -1,43 +1,31 @@
 import { useEffect, useState } from "react";
-import { Route, Switch } from "react-router-dom";
 import "../styles/App.scss";
 import getApi from "../services/callsApi";
 import CardList from "./CardList";
-import CardDetail from "./CardDetail";
+// import CardDetail from "./CardDetail";
+// import CardItem from "./CardItem";
 import Filters from "./Filters";
-import Footer from "./Footer";
-import Header from "./Header";
 
 function App() {
   // Declaro variables de estado
   const [character, setCharacterData] = useState([]);
   const [search, setSearch] = useState("");
-  const [searchByHouse, setSearchByHouse] = useState("Gryffindor");
   // const [data, setData] = useState('');
   // Hago la petición a la API según carga la página.
   useEffect(() => {
     getApi().then((character) => {
+      console.log(character);
       setCharacterData(character);
     });
   }, [character]);
 
-  useEffect(() => {
-    getApi(searchByHouse).then(() => {
-      setSearchByHouse(searchByHouse);
-    });
-  }, [searchByHouse]);
-
-  // Handlers de los inputs
-  const handleInput = (data) => {
-    if (data.key === "name") {
-      setSearch(data.value);
-    } else if (data.key === "house") {
-      setSearchByHouse(data.value);
-    }
+  // Handlers
+  const handleSearch = (ev) => {
+    setSearch(ev.target.value);
   };
 
   // Renderizado página
-  const filterName = character
+  const renderData = character
     .filter((characterData) => {
       if (search !== "") {
         return characterData.name
@@ -66,32 +54,21 @@ function App() {
       );
     });
 
-  const renderCharacterDetail = (props) => {
-    const routeId = props.match.params.characterId;
-    const characterFound = character.find((person) => character.id === routeId);
-    return <CardDetail character={characterFound} />;
-  };
-
   return (
     <>
-      <Header />
-      <Switch>
-        <Route path="/" exact>
-          <div>
-            <Filters
-              character={search}
-              handleInput={handleInput}
-              house={searchByHouse}
-            />
-            <CardList character={filterName} />
-          </div>
-        </Route>
-        <Route path="/person/:personId" render={renderCharacterDetail} />
-      </Switch>
-      <Footer />
-      <section>
-        <ul>{filterName}</ul>
-      </section>
+      <header>
+        <h1>Harry Potter</h1>
+      </header>
+      <main>
+        <Filters handleSearch={handleSearch} />
+        <CardList />
+        <section>
+          <ul>{renderData}</ul>
+        </section>
+      </main>
+      <footer>
+        <small>&copy; 2022 elvfira </small>
+      </footer>
     </>
   );
 }
