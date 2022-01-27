@@ -1,4 +1,17 @@
 function Filters (props) {
+    const handleName = (ev) => {
+      props.handleSearch({
+        'key':'name',
+        'value':ev.currentTarget.value
+      });
+    }
+    const handleHouse = (ev) => {
+      props.handleSearch({
+        'key':'house',
+        'value':ev.currentTarget.value
+      });
+    }
+
     return (
         <>
         <form>
@@ -7,11 +20,11 @@ function Filters (props) {
             type="text" 
             id="name"
             placeholder="Ej.: Harry Potter"
-            value={props.search}
-            onChange={props.handleSearch}
+            value={props.filterName}
+            onChange={handleName}
           />
           <label htmlFor="house">Selecciona la casa:</label>
-          <select name="house">
+          <select name="house" value={props.filterHouse} onChange={handleHouse}>
             <option value="gryffindor">Gryffindor</option>
             <option value="slytherin">Slytherin</option>
             <option value="ravenclaw">Ravenclaw</option>
