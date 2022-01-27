@@ -38,19 +38,10 @@ function App() {
     .map((characterData, index) => {
       return (
         <li key={index} className="character">
-          <article>
-            <img
-              alt="foto del personaje"
-              src={
-                characterData.image !== ""
-                  ? characterData.image
-                  : "https://via.placeholder.com/210x295/e8ffe9/666666/?text=HarryPotter"
-              }
-            />
-            <h2>{characterData.name}</h2>
-            <p>{characterData.species}</p>
-          </article>
+
+        <CardList index= {index} characterData= {characterData}/>
         </li>
+        
       );
     });
 
@@ -61,7 +52,7 @@ function App() {
       </header>
       <main>
         <Filters handleSearch={handleSearch} />
-        <CardList />
+
         <section>
           <ul>{renderData}</ul>
         </section>
